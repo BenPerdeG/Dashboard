@@ -6,80 +6,77 @@
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
         <ion-title class="dashboard-title">
-          <ion-icon name="analytics-outline" class="title-icon"></ion-icon>
+          <IonIcon :icon="trendingUpOutline" class="title-icon" />
           Dashboard Técnico
         </ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" class="ion-padding dashboard-content">
+    <ion-content :fullscreen="true" class="ion-padding dashboard-content scrollable-content">
       <ion-grid class="dashboard-grid">
-
-        <!-- Fila 1: Sparkline + Gauge -->
+        <!-- Row 1: Real-time + Gauge -->
         <ion-row class="dashboard-row">
           <ion-col size="12" size-md="6">
-            <div class="dashboard-card sparkline-card">
-              <div class="card-header">
-                <ion-icon name="log-in-outline" class="card-icon"></ion-icon>
-                <h3 class="card-title">Inicios de Sesión</h3>
-              </div>
-              <spark-line v-bind="sparkData1" />
-            </div>
-          </ion-col>
-          <ion-col size="12" size-md="6">
-            <div class="dashboard-card gauge-card">
-              <div class="card-header">
-                <ion-icon name="rocket-outline" class="card-icon"></ion-icon>
-                <h3 class="card-title">Progreso de Despliegue</h3>
-              </div>
-              <div class="gauge-container">
-                <Chart :type="'doughnut'" :data="gaugeData" :options="gaugeOptions" />
-                <div class="gauge-percentage">78%</div>
-              </div>
-            </div>
-          </ion-col>
-        </ion-row>
-
-        <!-- Fila 2: Apex bar + ECharts pie -->
-        <ion-row class="dashboard-row">
-          <ion-col size="12" size-md="8">
-            <div class="dashboard-card bar-chart-card">
-              <div class="card-header">
-                <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
-                <h3 class="card-title">Solicitudes HTTP por Módulo</h3>
-              </div>
-              <VueApexCharts type="bar" :options="apexOptions" :series="apexSeries" width="100%" height="100%" />
-            </div>
-          </ion-col>
-          <ion-col size="12" size-md="4">
-            <div class="dashboard-card pie-chart-card">
-              <div class="card-header">
-                <ion-icon name="people-outline" class="card-icon"></ion-icon>
-                <h3 class="card-title">Tipos de Usuario Activos</h3>
-              </div>
-              <VChart :option="echartPieOptions" class="echart-full" autoresize />
-            </div>
-          </ion-col>
-        </ion-row>
-
-        <!-- Fila 3: Real-time -->
-        <ion-row class="dashboard-row">
-          <ion-col size="12">
             <div class="dashboard-card realtime-card">
               <div class="card-header">
-                <ion-icon name="pulse-outline" class="card-icon"></ion-icon>
-                <h3 class="card-title">Conexiones Activas en Tiempo Real</h3>
+                <IonIcon :icon="pulseOutline" class="card-icon" />
+                <h3 class="card-title">Actividad en Tiempo Real</h3>
                 <div class="realtime-badge">
                   <span class="pulse-dot"></span>
                   En vivo
                 </div>
               </div>
-              <VueApexCharts type="line" :options="realTimeOptions" :series="[{ name: 'Conexiones', data: realTimeData }]"
-                width="100%" height="200" />
+              <VueApexCharts type="line" :options="realTimeOptions" :series="[{ name: 'Live', data: realTimeData }]"
+                width="100%" height="160" />
+            </div>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <div class="dashboard-card gauge-card">
+              <div class="card-header">
+                <IonIcon :icon="speedometerOutline" class="card-icon" />
+                <h3 class="card-title">Progreso de Objetivos</h3>
+              </div>
+              <div class="gauge-container small-height">
+                <Chart :type="'doughnut'" :data="gaugeData" :options="gaugeOptions" />
+                <div class="gauge-percentage">65%</div>
+              </div>
             </div>
           </ion-col>
         </ion-row>
 
+        <!-- Row 2: Bar + CLICKS -->
+        <ion-row class="dashboard-row">
+          <ion-col size="12" size-md="8">
+            <div class="dashboard-card bar-chart-card">
+              <div class="card-header">
+                <IonIcon :icon="barChartOutline" class="card-icon" />
+                <h3 class="card-title">Ventas Mensuales</h3>
+              </div>
+              <VueApexCharts type="bar" :options="apexOptions" :series="apexSeries" width="100%" height="160" />
+            </div>
+          </ion-col>
+
+          <ion-col size="12" size-md="4">
+            <div class="custom dashboard-card gauge-card">
+              <Component title="CLICKS" value="1,234" textColor="white" iconName="navigate-outline"
+                :chartSeries="[{ data: [25, 66, 41, 59, 25, 44, 12, 36, 9, 21] }]" chartHeight="160" />
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <!-- Row 3: Pie Chart (Users) -->
+        <ion-row class="dashboard-row">
+          <ion-col size="12" size-md="6" offset-md="3">
+            <div class="dashboard-card pie-chart-card">
+              <div class="card-header">
+                <IonIcon :icon="peopleOutline" class="card-icon" />
+                <h3 class="card-title">Distribución de Usuarios</h3>
+              </div>
+              <VChart :option="echartPieOptions" class="echart-full small-height" autoresize />
+            </div>
+          </ion-col>
+        </ion-row>
       </ion-grid>
     </ion-content>
   </ion-page>
@@ -90,9 +87,12 @@ import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
   IonPage, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonIcon
 } from '@ionic/vue';
-import { analyticsOutline, logInOutline, rocketOutline, barChartOutline, peopleOutline, pulseOutline } from 'ionicons/icons';
+import {
+  trendingUpOutline, navigateOutline, peopleOutline, barChartOutline,
+  pulseOutline, speedometerOutline
+} from 'ionicons/icons';
 
-import SparkLine from '../components/SparkLine.vue';
+import Component from '@/components/Custom.vue';
 
 // Chart.js
 import {
@@ -114,53 +114,98 @@ echarts.use([PieChart, TitleComponent, TooltipComponent, LegendComponent, Canvas
 
 import { ref } from 'vue'
 
-// SparkLine: Inicios de sesión diarios
-const sparkData1 = {
-  title: "Logins",
-  value: "1,248",
-  bgColor: "gradient-green",
-  textColor: "white",
-  iconName: "log-in-outline",
-  chartOptions: {
-    chart: {
-      id: 'logins',
-      type: 'area',
-      sparkline: { enabled: true },
-      dropShadow: { enabled: true, top: 1, left: 1, blur: 2, opacity: 0.5 }
-    },
-    stroke: { curve: 'smooth', width: 3 },
-    colors: ['#4ade80'],
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shade: 'dark',
-        type: 'vertical',
-        shadeIntensity: 0.5,
-        gradientToColors: ['#22c55e'],
-        inverseColors: false,
-        opacityFrom: 0.7,
-        opacityTo: 0.3,
-      }
-    },
-    tooltip: { 
-      theme: 'dark', 
-      x: { show: false }, 
-      y: { title: { formatter: () => '' } },
-      style: {
-        fontSize: '12px',
-        fontFamily: 'Inter, sans-serif'
-      }
+// Colors Updated
+const apexOptions = {
+  chart: {
+    type: 'bar',
+    toolbar: { show: false },
+    dropShadow: { enabled: true, top: 2, left: 2, blur: 4, opacity: 0.2 }
+  },
+  plotOptions: {
+    bar: {
+      borderRadius: 6,
+      columnWidth: '60%',
+      dataLabels: { position: 'top' }
     }
   },
-  chartSeries: [{ data: [120, 150, 100, 180, 200, 170, 220, 210, 190, 248] }],
+  dataLabels: {
+    enabled: true,
+    offsetY: -20,
+    style: { fontSize: '12px', colors: ['#fff'] }
+  },
+  colors: ['#ec4899', '#f43f5e', '#f87171', '#fb923c', '#34d399'],
+  xaxis: {
+    categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
+    labels: { style: { colors: '#cbd5e1', fontSize: '12px' } },
+    axisBorder: { show: false }, axisTicks: { show: false }
+  },
+  yaxis: {
+    labels: { style: { colors: '#cbd5e1' } }
+  },
+  grid: {
+    borderColor: '#334155',
+    strokeDashArray: 5,
+    padding: { top: 0, right: 0, bottom: 0, left: 10 }
+  },
+  tooltip: {
+    theme: 'dark',
+    y: { formatter: val => val + " unidades" }
+  }
+};
+const apexSeries = [{ name: 'Ventas', data: [10, 41, 35, 51, 49] }];
+
+const echartPieOptions = {
+  title: {
+    text: 'Tipos de Usuario',
+    textStyle: { color: '#f8fafc', fontSize: 14, fontWeight: 'normal' },
+    left: 'center',
+    top: 0
+  },
+  tooltip: {
+    trigger: 'item',
+    backgroundColor: '#1e293b',
+    borderColor: '#334155',
+    textStyle: { color: '#f8fafc' }
+  },
+  legend: {
+    orient: 'vertical',
+    left: 'left',
+    top: 'middle',
+    textStyle: { color: '#cbd5e1' }
+  },
+  series: [{
+    name: 'Usuarios',
+    type: 'pie',
+    radius: ['40%', '70%'],
+    center: ['65%', '50%'],
+    itemStyle: {
+      borderRadius: 10,
+      borderColor: '#1e293b',
+      borderWidth: 2
+    },
+    label: { show: false },
+    emphasis: {
+      label: { show: true, fontSize: '14', fontWeight: 'bold' },
+      itemStyle: {
+        shadowBlur: 10,
+        shadowOffsetX: 0,
+        shadowColor: 'rgba(0, 0, 0, 0.5)'
+      }
+    },
+    labelLine: { show: false },
+    data: [
+      { value: 1048, name: 'Admins', itemStyle: { color: '#eab308' } },
+      { value: 735, name: 'Jugadores', itemStyle: { color: '#10b981' } },
+      { value: 580, name: 'Invitados', itemStyle: { color: '#6366f1' } }
+    ]
+  }]
 };
 
-// Gauge: Progreso de despliegue
 const gaugeData = {
-  labels: ['Desplegado', 'Pendiente'],
+  labels: ['Progreso', 'Restante'],
   datasets: [{
-    data: [78, 22],
-    backgroundColor: ['#10b981', '#1f2937'],
+    data: [65, 35],
+    backgroundColor: ['#14b8a6', '#1f2937'],
     borderWidth: 0,
     borderRadius: 5
   }]
@@ -174,9 +219,7 @@ const gaugeOptions = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        label: function(context) {
-          return context.label + ': ' + context.raw + '%';
-        }
+        label: ctx => `${ctx.label}: ${ctx.raw}%`
       }
     }
   },
@@ -186,416 +229,196 @@ const gaugeOptions = {
   }
 };
 
-// Apex bar: Solicitudes HTTP por módulo
-const apexOptions = {
-  chart: { 
-    type: 'bar',
-    toolbar: {
-      show: true,
-      tools: {
-        download: true,
-        selection: false,
-        zoom: false,
-        zoomin: false,
-        zoomout: false,
-        pan: false,
-        reset: false
-      }
-    },
-    dropShadow: {
-      enabled: true,
-      top: 2,
-      left: 2,
-      blur: 4,
-      opacity: 0.2
-    }
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 6,
-      columnWidth: '60%',
-      distributed: false,
-      dataLabels: {
-        position: 'top'
-      }
-    }
-  },
-  dataLabels: {
-    enabled: true,
-    offsetY: -20,
-    style: {
-      fontSize: '12px',
-      colors: ["#fff"]
-    }
-  },
-  colors: ['#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6'],
-  xaxis: { 
-    categories: ['Auth', 'Perfil', 'Tienda', 'Chat', 'Notificaciones'],
-    labels: {
-      style: {
-        colors: '#cbd5e1',
-        fontSize: '12px'
-      }
-    },
-    axisBorder: {
-      show: false
-    },
-    axisTicks: {
-      show: false
-    }
-  },
-  yaxis: {
-    labels: {
-      style: {
-        colors: '#cbd5e1'
-      }
-    }
-  },
-  grid: {
-    borderColor: '#334155',
-    strokeDashArray: 5,
-    padding: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 10
-    }
-  },
-  tooltip: {
-    theme: 'dark',
-    y: {
-      formatter: function(val) {
-        return val + " solicitudes"
-      }
-    }
-  }
-};
-const apexSeries = [{ name: 'Peticiones', data: [230, 190, 340, 120, 260] }];
-
-// ECharts pie: Tipos de usuario activos
-const echartPieOptions = {
-  title: { 
-    text: 'Tipos de Usuario',
-    textStyle: {
-      color: '#f8fafc',
-      fontSize: 14,
-      fontWeight: 'normal'
-    },
-    left: 'center',
-    top: 0
-  },
-  tooltip: { 
-    trigger: 'item',
-    backgroundColor: '#1e293b',
-    borderColor: '#334155',
-    textStyle: {
-      color: '#f8fafc'
-    }
-  },
-  legend: { 
-    orient: 'vertical',
-    left: 'left',
-    top: 'middle',
-    textStyle: {
-      color: '#cbd5e1'
-    }
-  },
-  series: [{
-    name: 'Usuarios',
-    type: 'pie',
-    radius: ['40%', '70%'],
-    center: ['65%', '50%'],
-    avoidLabelOverlap: false,
-    itemStyle: {
-      borderRadius: 10,
-      borderColor: '#1e293b',
-      borderWidth: 2
-    },
-    label: {
-      show: false
-    },
-    emphasis: {
-      label: {
-        show: true,
-        fontSize: '14',
-        fontWeight: 'bold'
-      },
-      itemStyle: {
-        shadowBlur: 10,
-        shadowOffsetX: 0,
-        shadowColor: 'rgba(0, 0, 0, 0.5)'
-      }
-    },
-    labelLine: {
-      show: false
-    },
-    data: [
-      { value: 812, name: 'Clientes', itemStyle: { color: '#f59e0b' } },
-      { value: 356, name: 'Soporte', itemStyle: { color: '#10b981' } },
-      { value: 190, name: 'Administradores', itemStyle: { color: '#3b82f6' } }
-    ]
-  }]
-};
-
-// Real-time: Conexiones activas
-const realTimeData = ref([12, 14, 13, 15, 16, 17, 16])
+const realTimeData = ref([10, 12, 14, 13, 15, 14, 13])
 setInterval(() => {
   const last = realTimeData.value[realTimeData.value.length - 1]
   const next = last + (Math.random() * 4 - 2)
   if (realTimeData.value.length > 20) realTimeData.value.shift()
-  realTimeData.value.push(Math.max(0, Math.round(next)))
+  realTimeData.value.push(Math.round(next))
 }, 1000)
 
 const realTimeOptions = {
   chart: {
-    animations: { 
-      enabled: true,
-      easing: 'linear',
-      dynamicAnimation: {
-        speed: 1000
-      }
-    },
+    animations: { enabled: true, easing: 'linear', dynamicAnimation: { speed: 1000 } },
     toolbar: { show: false },
-    dropShadow: {
-      enabled: true,
-      top: 3,
-      left: 3,
-      blur: 4,
-      opacity: 0.2
-    }
+    dropShadow: { enabled: true, top: 3, left: 3, blur: 4, opacity: 0.2 }
   },
-  colors: ['#06b6d4'],
-  stroke: { 
-    curve: 'smooth',
-    width: 3
-  },
-  markers: {
-    size: 0
-  },
+  colors: ['#22d3ee'],
+  stroke: { curve: 'smooth', width: 3 },
+  markers: { size: 0 },
   fill: {
     type: 'gradient',
     gradient: {
       shade: 'dark',
       type: 'vertical',
       shadeIntensity: 0.5,
-      gradientToColors: ['#0ea5e9'],
+      gradientToColors: ['#06b6d4'],
       inverseColors: false,
       opacityFrom: 0.7,
       opacityTo: 0.3,
       stops: [0, 100]
     }
   },
-  xaxis: { 
+  xaxis: {
     labels: { show: false },
     axisBorder: { show: false },
     axisTicks: { show: false },
     categories: Array(20).fill('')
   },
-  yaxis: { 
+  yaxis: {
     labels: { show: false },
     min: 0,
-    max: function(max) { return max + 5 }
+    max: max => max + 5
   },
   grid: {
     borderColor: '#334155',
     strokeDashArray: 5,
-    padding: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0
-    }
+    padding: { top: 0, right: 0, bottom: 0, left: 0 }
   },
   tooltip: {
     theme: 'dark',
     x: { show: false },
-    y: {
-      formatter: function(val) {
-        return val + " conexiones"
-      }
-    }
+    y: { formatter: val => val + " usuarios" }
   }
 }
 </script>
 
 <style scoped>
-.header-toolbar {
-  --background: #0f172a;
-  --border-color: #1e293b;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dashboard-title {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: #f8fafc;
-  font-size: 1.25rem;
-}
-
-.title-icon {
-  margin-right: 8px;
-  font-size: 1.5rem;
-  color: #3b82f6;
-}
-
-.dashboard-content {
-  --background: #0f172a;
-}
-
+ion-page,
+ion-content.dashboard-content,
 .dashboard-grid {
-  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable-content {
+  overflow-y: auto;
+  background-color: #0f172a;
 }
 
 .dashboard-row {
   margin-bottom: 16px;
+  align-items: stretch;
+  min-height: min-content;
 }
 
 .dashboard-card {
-  background: #1e293b;
+  background-color: #1e293b;
   border-radius: 12px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   height: 100%;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.echart-full,
+.echart-full.small-height,
+.apexcharts-container,
+.gauge-container {
+  position: relative;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gauge-container canvas {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.pie-chart-card .echart-full {
+  height: 160px !important;
+}
+
+.bar-chart-card .apexcharts-container {
+  flex: 1;
+  min-height: 160px;
+}
+
+.gauge-card .gauge-container {
+  height: 160px !important;
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #334155;
-  position: relative;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .card-icon {
-  font-size: 1.5rem;
-  margin-right: 12px;
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
-  padding: 8px;
-  border-radius: 8px;
+  font-size: 20px;
+  color: #fbbf24;
+  margin-right: 8px;
 }
 
 .card-title {
-  margin: 0;
-  font-size: 1rem;
+  color: #f8fafc;
+  font-size: 16px;
   font-weight: 600;
-  color: #f8fafc;
-}
-
-.sparkline-card .card-icon {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.gauge-card .card-icon {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-}
-
-.bar-chart-card .card-icon {
-  color: #06b6d4;
-  background: rgba(6, 182, 212, 0.1);
-}
-
-.pie-chart-card .card-icon {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
-}
-
-.realtime-card .card-icon {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
-}
-
-.gauge-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 250px;
-}
-
-.gauge-percentage {
-  position: absolute;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #f8fafc;
-}
-
-.echart-full {
-  width: 100%;
-  height: 250px;
+  margin: 0;
 }
 
 .realtime-badge {
-  position: absolute;
-  right: 0;
-  top: 0;
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 4px;
+  margin-left: auto;
   display: flex;
   align-items: center;
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: bold;
+  background-color: #14532d;
+  padding: 4px 8px;
+  border-radius: 9999px;
 }
 
 .pulse-dot {
-  height: 8px;
   width: 8px;
-  background-color: #ef4444;
+  height: 8px;
+  background-color: #22c55e;
   border-radius: 50%;
   margin-right: 6px;
-  display: inline-block;
   animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
   0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    transform: scale(0.9);
+    opacity: 0.7;
   }
-  
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
   }
-  
+
   100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    transform: scale(0.9);
+    opacity: 0.7;
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .dashboard-card {
-    margin-bottom: 16px;
-  }
-  
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .card-icon {
-    margin-bottom: 8px;
-  }
-  
-  .realtime-badge {
-    position: relative;
-    margin-top: 8px;
-    align-self: flex-start;
-  }
+.gauge-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fbbf24;
+  margin: 0;
+  width: max-content;
+}
+
+ion-col {
+  display: flex;
+  flex-direction: column;
 }
 </style>

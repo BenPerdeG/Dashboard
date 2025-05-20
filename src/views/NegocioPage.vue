@@ -6,55 +6,58 @@
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
         <ion-title class="dashboard-title">
-          <ion-icon name="trending-up-outline" class="title-icon"></ion-icon>
+          <IonIcon :icon="trendingUpOutline" class="title-icon" />
           Dashboard de Negocio
         </ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" class="ion-padding dashboard-content">
+    <ion-content :fullscreen="true" class="ion-padding dashboard-content scrollable-content">
       <ion-grid class="dashboard-grid">
 
-        <!-- Fila 1: ECharts pie + Apex bar (Orden cambiado) -->
+        <!-- Row 1: ECharts pie + Apex bar -->
         <ion-row class="dashboard-row">
           <ion-col size="12" size-md="4">
             <div class="dashboard-card pie-chart-card">
               <div class="card-header">
-                <ion-icon name="people-outline" class="card-icon"></ion-icon>
+                <IonIcon :icon="peopleOutline" class="card-icon" />
                 <h3 class="card-title">Distribución de Usuarios</h3>
               </div>
-              <VChart :option="echartPieOptions" class="echart-full" autoresize />
+              <VChart :option="echartPieOptions" class="echart-full small-height" autoresize />
             </div>
           </ion-col>
           <ion-col size="12" size-md="8">
             <div class="dashboard-card bar-chart-card">
               <div class="card-header">
-                <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
+                <IonIcon :icon="barChartOutline" class="card-icon" />
                 <h3 class="card-title">Ventas Mensuales</h3>
               </div>
-              <VueApexCharts type="bar" :options="apexOptions" :series="apexSeries" width="100%" height="100%" />
+              <VueApexCharts type="bar" :options="apexOptions" :series="apexSeries" width="100%" height="160" />
             </div>
           </ion-col>
         </ion-row>
 
-        <!-- Fila 2: Sparkline + Gauge (Orden original) -->
+        <!-- Row 2: Custom Component + Gauge -->
         <ion-row class="dashboard-row">
           <ion-col size="12" size-md="6">
-            <div class="dashboard-card sparkline-card">
-              <div class="card-header">
-                <ion-icon name="navigate-outline" class="card-icon"></ion-icon>
-                <h3 class="card-title">Clicks Totales</h3>
-              </div>
-              <spark-line v-bind="sparkData1" />
+            <div class="custom dashboard-card gauge-card">
+              <Component 
+                title="CLICKS" 
+                value="1,234" 
+                textColor="white"
+                iconName="navigate-outline" 
+                :chartSeries="[{ data: [25, 66, 41, 59, 25, 44, 12, 36, 9, 21] }]"
+                chartHeight="160" 
+              />
             </div>
           </ion-col>
           <ion-col size="12" size-md="6">
             <div class="dashboard-card gauge-card">
               <div class="card-header">
-                <ion-icon name="speedometer-outline" class="card-icon"></ion-icon>
+                <IonIcon :icon="speedometerOutline" class="card-icon" />
                 <h3 class="card-title">Progreso de Objetivos</h3>
               </div>
-              <div class="gauge-container">
+              <div class="gauge-container small-height">
                 <Chart :type="'doughnut'" :data="gaugeData" :options="gaugeOptions" />
                 <div class="gauge-percentage">65%</div>
               </div>
@@ -62,12 +65,12 @@
           </ion-col>
         </ion-row>
 
-        <!-- Fila 3: Real-time (Orden original) -->
+        <!-- Row 3: Real-time -->
         <ion-row class="dashboard-row">
           <ion-col size="12">
             <div class="dashboard-card realtime-card">
               <div class="card-header">
-                <ion-icon name="pulse-outline" class="card-icon"></ion-icon>
+                <IonIcon :icon="pulseOutline" class="card-icon" />
                 <h3 class="card-title">Actividad en Tiempo Real</h3>
                 <div class="realtime-badge">
                   <span class="pulse-dot"></span>
@@ -75,7 +78,7 @@
                 </div>
               </div>
               <VueApexCharts type="line" :options="realTimeOptions" :series="[{ name: 'Live', data: realTimeData }]"
-                width="100%" height="200" />
+                width="100%" height="160" />
             </div>
           </ion-col>
         </ion-row>
@@ -90,9 +93,12 @@ import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
   IonPage, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonIcon
 } from '@ionic/vue';
-import { trendingUpOutline, navigateOutline, peopleOutline, barChartOutline, pulseOutline, speedometerOutline } from 'ionicons/icons';
+import { 
+  trendingUpOutline, navigateOutline, peopleOutline, barChartOutline, 
+  pulseOutline, speedometerOutline 
+} from 'ionicons/icons';
 
-import SparkLine from '../components/SparkLine.vue';
+import Component from '@/components/Custom.vue';
 
 // Chart.js
 import {
@@ -114,48 +120,7 @@ echarts.use([PieChart, TitleComponent, TooltipComponent, LegendComponent, Canvas
 
 import { ref } from 'vue'
 
-// SparkLine props
-const sparkData1 = {
-  title: "CLICKS",
-  value: "1,234",
-  bgColor: "gradient-blue",
-  textColor: "white",
-  iconName: "navigate-outline",
-  chartOptions: {
-    chart: {
-      id: 'clicks',
-      type: 'area',
-      sparkline: { enabled: true },
-      dropShadow: { enabled: true, top: 1, left: 1, blur: 2, opacity: 0.5 }
-    },
-    stroke: { curve: 'smooth', width: 3 },
-    colors: ['#4ade80'],
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shade: 'dark',
-        type: 'vertical',
-        shadeIntensity: 0.5,
-        gradientToColors: ['#22c55e'],
-        inverseColors: false,
-        opacityFrom: 0.7,
-        opacityTo: 0.3,
-      }
-    },
-    tooltip: { 
-      theme: 'dark', 
-      x: { show: false }, 
-      y: { title: { formatter: () => '' } },
-      style: {
-        fontSize: '12px',
-        fontFamily: 'Inter, sans-serif'
-      }
-    }
-  },
-  chartSeries: [{ data: [25, 66, 41, 59, 25, 44, 12, 36, 9, 21] }],
-};
-
-// Gauge-like doughnut chart
+// Data and Options
 const gaugeData = {
   labels: ['Progreso', 'Restante'],
   datasets: [{
@@ -186,9 +151,8 @@ const gaugeOptions = {
   }
 };
 
-// Apex bar
 const apexOptions = {
-  chart: { 
+  chart: {
     type: 'bar',
     toolbar: {
       show: true,
@@ -214,7 +178,6 @@ const apexOptions = {
     bar: {
       borderRadius: 6,
       columnWidth: '60%',
-      distributed: false,
       dataLabels: {
         position: 'top'
       }
@@ -229,7 +192,7 @@ const apexOptions = {
     }
   },
   colors: ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef'],
-  xaxis: { 
+  xaxis: {
     categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
     labels: {
       style: {
@@ -237,44 +200,26 @@ const apexOptions = {
         fontSize: '12px'
       }
     },
-    axisBorder: {
-      show: false
-    },
-    axisTicks: {
-      show: false
-    }
+    axisBorder: { show: false },
+    axisTicks: { show: false }
   },
   yaxis: {
-    labels: {
-      style: {
-        colors: '#cbd5e1'
-      }
-    }
+    labels: { style: { colors: '#cbd5e1' } }
   },
   grid: {
     borderColor: '#334155',
     strokeDashArray: 5,
-    padding: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 10
-    }
+    padding: { top: 0, right: 0, bottom: 0, left: 10 }
   },
   tooltip: {
     theme: 'dark',
-    y: {
-      formatter: function(val) {
-        return val + " unidades"
-      }
-    }
+    y: { formatter: val => val + " unidades" }
   }
 };
 const apexSeries = [{ name: 'Ventas', data: [10, 41, 35, 51, 49] }];
 
-// ECharts pie
 const echartPieOptions = {
-  title: { 
+  title: {
     text: 'Tipos de Usuario',
     textStyle: {
       color: '#f8fafc',
@@ -284,21 +229,17 @@ const echartPieOptions = {
     left: 'center',
     top: 0
   },
-  tooltip: { 
+  tooltip: {
     trigger: 'item',
     backgroundColor: '#1e293b',
     borderColor: '#334155',
-    textStyle: {
-      color: '#f8fafc'
-    }
+    textStyle: { color: '#f8fafc' }
   },
-  legend: { 
+  legend: {
     orient: 'vertical',
     left: 'left',
     top: 'middle',
-    textStyle: {
-      color: '#cbd5e1'
-    }
+    textStyle: { color: '#cbd5e1' }
   },
   series: [{
     name: 'Usuarios',
@@ -311,24 +252,16 @@ const echartPieOptions = {
       borderColor: '#1e293b',
       borderWidth: 2
     },
-    label: {
-      show: false
-    },
+    label: { show: false },
     emphasis: {
-      label: {
-        show: true,
-        fontSize: '14',
-        fontWeight: 'bold'
-      },
+      label: { show: true, fontSize: '14', fontWeight: 'bold' },
       itemStyle: {
         shadowBlur: 10,
         shadowOffsetX: 0,
         shadowColor: 'rgba(0, 0, 0, 0.5)'
       }
     },
-    labelLine: {
-      show: false
-    },
+    labelLine: { show: false },
     data: [
       { value: 1048, name: 'Admins', itemStyle: { color: '#3b82f6' } },
       { value: 735, name: 'Jugadores', itemStyle: { color: '#f59e0b' } },
@@ -337,7 +270,6 @@ const echartPieOptions = {
   }]
 };
 
-// Real-time
 const realTimeData = ref([10, 12, 14, 13, 15, 14, 13])
 setInterval(() => {
   const last = realTimeData.value[realTimeData.value.length - 1]
@@ -348,12 +280,10 @@ setInterval(() => {
 
 const realTimeOptions = {
   chart: {
-    animations: { 
+    animations: {
       enabled: true,
       easing: 'linear',
-      dynamicAnimation: {
-        speed: 1000
-      }
+      dynamicAnimation: { speed: 1000 }
     },
     toolbar: { show: false },
     dropShadow: {
@@ -365,13 +295,8 @@ const realTimeOptions = {
     }
   },
   colors: ['#f59e0b'],
-  stroke: { 
-    curve: 'smooth',
-    width: 3
-  },
-  markers: {
-    size: 0
-  },
+  stroke: { curve: 'smooth', width: 3 },
+  markers: { size: 0 },
   fill: {
     type: 'gradient',
     gradient: {
@@ -385,217 +310,172 @@ const realTimeOptions = {
       stops: [0, 100]
     }
   },
-  xaxis: { 
+  xaxis: {
     labels: { show: false },
     axisBorder: { show: false },
     axisTicks: { show: false },
     categories: Array(20).fill('')
   },
-  yaxis: { 
+  yaxis: {
     labels: { show: false },
     min: 0,
-    max: function(max) { return max + 5 }
+    max: max => max + 5
   },
   grid: {
     borderColor: '#334155',
     strokeDashArray: 5,
-    padding: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0
-    }
+    padding: { top: 0, right: 0, bottom: 0, left: 0 }
   },
   tooltip: {
     theme: 'dark',
     x: { show: false },
-    y: {
-      formatter: function(val) {
-        return val + " usuarios"
-      }
-    }
+    y: { formatter: val => val + " usuarios" }
   }
 }
 </script>
 
 <style scoped>
-.header-toolbar {
-  --background: #0f172a;
-  --border-color: #1e293b;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dashboard-title {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: #f8fafc;
-  font-size: 1.25rem;
-}
-
-.title-icon {
-  margin-right: 8px;
-  font-size: 1.5rem;
-  color: #f59e0b;
-}
-
-.dashboard-content {
-  --background: #0f172a;
-}
-
+ion-page,
+ion-content.dashboard-content,
 .dashboard-grid {
-  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable-content {
+  overflow-y: auto;
+  background-color: #0f172a;
 }
 
 .dashboard-row {
   margin-bottom: 16px;
+  /* Add these to prevent row height issues */
+  align-items: stretch;
+  min-height: min-content;
 }
 
 .dashboard-card {
-  background: #1e293b;
+  background-color: #1e293b;
   border-radius: 12px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   height: 100%;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid #334155;
-  overflow: hidden;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.card-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #334155;
+  flex-direction: column;
+  /* Add these to contain charts properly */
+  overflow: hidden;
   position: relative;
 }
 
-.card-icon {
-  font-size: 1.5rem;
-  margin-right: 12px;
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-  padding: 8px;
-  border-radius: 8px;
-}
-
-.card-title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #f8fafc;
-}
-
-.sparkline-card .card-icon {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.gauge-card .card-icon {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-}
-
-.bar-chart-card .card-icon {
-  color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
-}
-
-.pie-chart-card .card-icon {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.realtime-card .card-icon {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
-}
-
+/* Chart container fixes */
+.echart-full, 
+.echart-full.small-height,
+.apexcharts-container,
 .gauge-container {
   position: relative;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 250px;
 }
 
-.gauge-percentage {
-  position: absolute;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #f8fafc;
+.gauge-container canvas {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.echart-full {
-  width: 100%;
-  height: 250px;
+/* Specific fixes for different chart types */
+.pie-chart-card .echart-full {
+  height: 160px !important;
 }
 
-.realtime-badge {
-  position: absolute;
-  right: 0;
-  top: 0;
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 4px;
+.bar-chart-card .apexcharts-container {
+  flex: 1;
+  min-height: 160px;
+}
+
+.gauge-card .gauge-container {
+  height: 160px !important;
+}
+
+/* Card header styles */
+.card-header {
   display: flex;
   align-items: center;
+  margin-bottom: 12px;
+  /* Prevent header from affecting height */
+  flex-shrink: 0;
+}
+
+.card-icon {
+  font-size: 20px;
+  color: #fbbf24;
+  margin-right: 8px;
+}
+
+.card-title {
+  color: #f8fafc;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Real-time badge styles */
+.realtime-badge {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: bold;
+  background-color: #14532d;
+  padding: 4px 8px;
+  border-radius: 9999px;
 }
 
 .pulse-dot {
-  height: 8px;
   width: 8px;
-  background-color: #ef4444;
+  height: 8px;
+  background-color: #22c55e;
   border-radius: 50%;
   margin-right: 6px;
-  display: inline-block;
   animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
   0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    transform: scale(0.9);
+    opacity: 0.7;
   }
-  
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
   }
-  
   100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    transform: scale(0.9);
+    opacity: 0.7;
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .dashboard-card {
-    margin-bottom: 16px;
-  }
-  
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .card-icon {
-    margin-bottom: 8px;
-  }
-  
-  .realtime-badge {
-    position: relative;
-    margin-top: 8px;
-    align-self: flex-start;
-  }
+.gauge-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fbbf24;
+  margin: 0;
+  width: max-content;
 }
+/* Ensure columns have consistent height */
+ion-col {
+  display: flex;
+  flex-direction: column;
+}
+
 </style>
