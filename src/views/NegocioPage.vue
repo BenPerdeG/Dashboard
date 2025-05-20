@@ -30,7 +30,7 @@
             <div class="dashboard-card bar-chart-card">
               <div class="card-header">
                 <IonIcon :icon="barChartOutline" class="card-icon" />
-                <h3 class="card-title">Ventas Mensuales</h3>
+                <h3 class="card-title">Horas mensuales jugadas de media</h3>
               </div>
               <VueApexCharts type="bar" :options="apexOptions" :series="apexSeries" width="100%" height="160" />
             </div>
@@ -42,11 +42,11 @@
           <ion-col size="12" size-md="6">
             <div class="custom dashboard-card gauge-card">
               <Component 
-                title="CLICKS" 
-                value="1,234" 
+                title="Registros de nuevos usuarios " 
+                value="(Últimos 10 dias)" 
                 textColor="white"
                 iconName="navigate-outline" 
-                :chartSeries="[{ data: [25, 66, 41, 59, 25, 44, 12, 36, 9, 21] }]"
+                :chartSeries="[{ data: [8, 6, 5, 9, 5, 4, 2, 6, 5, 9] }]"
                 chartHeight="160" 
               />
             </div>
@@ -55,11 +55,11 @@
             <div class="dashboard-card gauge-card">
               <div class="card-header">
                 <IonIcon :icon="speedometerOutline" class="card-icon" />
-                <h3 class="card-title">Progreso de Objetivos</h3>
+                <h3 class="card-title">Usuarios creando partidas</h3>
               </div>
               <div class="gauge-container small-height">
                 <Chart :type="'doughnut'" :data="gaugeData" :options="gaugeOptions" />
-                <div class="gauge-percentage">65%</div>
+                <div class="gauge-percentage">0%</div>
               </div>
             </div>
           </ion-col>
@@ -71,7 +71,7 @@
             <div class="dashboard-card realtime-card">
               <div class="card-header">
                 <IonIcon :icon="pulseOutline" class="card-icon" />
-                <h3 class="card-title">Actividad en Tiempo Real</h3>
+                <h3 class="card-title">Usuarios activos</h3>
                 <div class="realtime-badge">
                   <span class="pulse-dot"></span>
                   En vivo
@@ -98,7 +98,7 @@ import {
   pulseOutline, speedometerOutline 
 } from 'ionicons/icons';
 
-import Component from '@/components/Custom.vue';
+import Component from '../components/Custom.vue';
 
 // Chart.js
 import {
@@ -122,9 +122,9 @@ import { ref } from 'vue'
 
 // Data and Options
 const gaugeData = {
-  labels: ['Progreso', 'Restante'],
+  labels: ['Usuarios que han creado una partida', 'Usuarios que NO han creado una partida'],
   datasets: [{
-    data: [65, 35],
+    data: [1, 99],
     backgroundColor: ['#f59e0b', '#1f2937'],
     borderWidth: 0,
     borderRadius: 5
@@ -154,18 +154,6 @@ const gaugeOptions = {
 const apexOptions = {
   chart: {
     type: 'bar',
-    toolbar: {
-      show: true,
-      tools: {
-        download: true,
-        selection: false,
-        zoom: false,
-        zoomin: false,
-        zoomout: false,
-        pan: false,
-        reset: false
-      }
-    },
     dropShadow: {
       enabled: true,
       top: 2,
@@ -216,7 +204,7 @@ const apexOptions = {
     y: { formatter: val => val + " unidades" }
   }
 };
-const apexSeries = [{ name: 'Ventas', data: [10, 41, 35, 51, 49] }];
+const apexSeries = [{ name: 'Horas', data: [28, 20, 25, 20, 12] }];
 
 const echartPieOptions = {
   title: {
@@ -263,20 +251,40 @@ const echartPieOptions = {
     },
     labelLine: { show: false },
     data: [
-      { value: 1048, name: 'Admins', itemStyle: { color: '#3b82f6' } },
-      { value: 735, name: 'Jugadores', itemStyle: { color: '#f59e0b' } },
-      { value: 580, name: 'Invitados', itemStyle: { color: '#10b981' } }
+      { value: 2, name: 'Admins', itemStyle: { color: '#3b82f6' } },
+      { value: 12, name: 'Jugadores', itemStyle: { color: '#f59e0b' } }
     ]
   }]
 };
 
-const realTimeData = ref([10, 12, 14, 13, 15, 14, 13])
+const realTimeData = ref([5, 7, 6, 6, 8, 7, 5]);
+
+
+function generateRandomData() {
+  const min = 3;
+  const max = 10;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 setInterval(() => {
-  const last = realTimeData.value[realTimeData.value.length - 1]
-  const next = last + (Math.random() * 4 - 2)
-  if (realTimeData.value.length > 20) realTimeData.value.shift()
-  realTimeData.value.push(Math.round(next))
-}, 1000)
+
+  if (realTimeData.value.length > 12) {
+    realTimeData.value.shift();
+  }
+  
+
+  const lastValue = realTimeData.value[realTimeData.value.length - 1];
+  const randomChange = Math.random() * 4 - 2; 
+  let newValue = lastValue + randomChange;
+  
+
+  newValue = Math.max(2, Math.min(15, Math.round(newValue)));
+  
+  realTimeData.value.push(newValue);
+  
+
+  realTimeData.value = [...realTimeData.value];
+}, 1000);
 
 const realTimeOptions = {
   chart: {
