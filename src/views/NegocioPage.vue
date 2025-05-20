@@ -119,6 +119,8 @@ import { CanvasRenderer } from 'echarts/renderers'
 echarts.use([PieChart, TitleComponent, TooltipComponent, LegendComponent, CanvasRenderer])
 
 import { ref } from 'vue'
+import type { ChartOptions } from 'chart.js';
+
 
 // Data and Options
 const gaugeData = {
@@ -131,7 +133,7 @@ const gaugeData = {
   }]
 };
 
-const gaugeOptions = {
+const gaugeOptions: ChartOptions<'doughnut'> = {
   rotation: -90,
   circumference: 180,
   cutout: '80%',
@@ -139,9 +141,7 @@ const gaugeOptions = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        label: function(context) {
-          return context.label + ': ' + context.raw + '%';
-        }
+        label: (context) => `${context.label}: ${context.raw}%`
       }
     }
   },
@@ -150,7 +150,6 @@ const gaugeOptions = {
     animateScale: true
   }
 };
-
 const apexOptions = {
   chart: {
     type: 'bar',
@@ -201,7 +200,7 @@ const apexOptions = {
   },
   tooltip: {
     theme: 'dark',
-    y: { formatter: val => val + " unidades" }
+    y: { formatter: (val: string) => val + " unidades" }
   }
 };
 const apexSeries = [{ name: 'Horas', data: [28, 20, 25, 20, 12] }];
@@ -327,7 +326,7 @@ const realTimeOptions = {
   yaxis: {
     labels: { show: false },
     min: 0,
-    max: max => max + 5
+    max: (max: number) => max + 5
   },
   grid: {
     borderColor: '#334155',
@@ -337,7 +336,7 @@ const realTimeOptions = {
   tooltip: {
     theme: 'dark',
     x: { show: false },
-    y: { formatter: val => val + " usuarios" }
+    y: { formatter: (val: string) => val + " usuarios" }
   }
 }
 </script>

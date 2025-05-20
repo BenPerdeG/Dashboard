@@ -113,7 +113,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 echarts.use([PieChart, TitleComponent, TooltipComponent, LegendComponent, CanvasRenderer])
 
 import { ref } from 'vue'
-
+import type { ChartOptions } from 'chart.js';
 // Colors Updated
 const apexOptions = {
   chart: {
@@ -149,7 +149,7 @@ const apexOptions = {
   },
   tooltip: {
     theme: 'dark',
-    y: { formatter: val => val + " unidades" }
+    y: { formatter: (val: string) => val + " unidades" }
   }
 };
 const apexSeries = [{ name: 'Horas', data: [100, 410, 350, 510, 490] }];
@@ -212,7 +212,7 @@ const gaugeData = {
   }]
 };
 
-const gaugeOptions = {
+const gaugeOptions: ChartOptions<'doughnut'> = {
   rotation: -90,
   circumference: 180,
   cutout: '80%',
@@ -220,7 +220,7 @@ const gaugeOptions = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        label: ctx => `${ctx.label}: ${ctx.raw}%`
+        label: (context) => `${context.label}: ${context.raw}%`
       }
     }
   },
@@ -290,7 +290,7 @@ const realTimeOptions = {
   yaxis: {
     labels: { show: false },
     min: 0,
-    max: max => max + 5
+    max: (max: number) => max + 5
   },
   grid: {
     borderColor: '#334155',
@@ -300,7 +300,7 @@ const realTimeOptions = {
   tooltip: {
     theme: 'dark',
     x: { show: false },
-    y: { formatter: val => val + " tokens" }
+    y: { formatter: (val: string) => val + " tokens" }
   }
 }
 </script>
